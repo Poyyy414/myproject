@@ -5,9 +5,9 @@
 {% block content %}  
 <div class="container my-4">  
     <h2 class="text-center mb-4">Book Catalog</h2>  
-    <div class="mb-3">  
+    <div class="mb-3 text-center">  
         <!-- Add Book Button -->  
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBookModal">  
+        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addBookModal">  
             Add New Book  
         </button>  
     </div>  
@@ -52,21 +52,17 @@
     <script>  
         document.getElementById('submitBookButton').addEventListener('click', function() {  
             var formData = new FormData(document.getElementById('addBookForm'));  
-    
             fetch("{% url 'book_create' %}", {  
                 method: 'POST',  
                 body: formData,  
                 headers: {  
-                    'X-CSRFToken': "{{ csrf_token }}",  // Ensure CSRF token is included  
+                    'X-CSRFToken': "{{ csrf_token }}",  
                 }  
             })  
             .then(response => response.json())  
             .then(data => {  
                 if (data.success) {  
                     alert('Book added successfully!');  
-                    // Optionally, you can close the modal here  
-                    // $('#addBookModal').modal('hide');   
-                    // Reset the form after successful submission  
                     document.getElementById('addBookForm').reset();  
                 } else {  
                     alert('Error adding book: ' + data.error);  
@@ -75,27 +71,27 @@
         });  
     </script>
 
-<div class="row">  
-    {% for book in books %}  
-    <div class="col-md-4">  
-        <div class="card shadow-sm mb-4">  
-            {% if book.image and book.image.url %}  
-            <img src="{{ book.image.url }}" class="card-img-top" alt="{{ book.title }}">  
-            {% else %}  
-            <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image Available">  
-            {% endif %}  
-            <div class="card-body">  
-                <h5 class="card-title">{{ book.title }}</h5>  
-                <h6 class="card-subtitle mb-2 text-muted">by {{ book.author }}</h6>  
-                <p class="card-text">{{ book.description|truncatechars:100 }}</p>  
-                <div class="btn-group" role="group" aria-label="Basic outlined example">  
-                    <a href="{% url 'book_update' book.pk %}" class="btn btn-outline-secondary">Edit</a>  
-                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline-primary">View</a>  
-                    <a href="{% url 'book_delete' book.pk %}" class="btn btn-outline-danger">Delete</a>  
-                </div>   
+    <div class="row">  
+        {% for book in books %}  
+        <div class="col-md-4 mb-4">  
+            <div class="card shadow-lg border-0 rounded">  
+                {% if book.image and book.image.url %}  
+                <img src="{{ book.image.url }}" class="card-img-top" alt="{{ book.title }}">  
+                {% else %}  
+                <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image Available">  
+                {% endif %}  
+                <div class="card-body">  
+                    <h5 class="card-title">{{ book.title }}</h5>  
+                    <h6 class="card-subtitle mb-2 text-muted">by {{ book.author }}</h6>  
+                    <p class="card-text">{{ book.description|truncatechars:100 }}</p>  
+                    <div class="d-flex justify-content-between">  
+                        <a href="{% url 'book_update' book.pk %}" class="btn btn-outline-secondary">Edit</a>  
+                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline-primary">View</a>  
+                        <a href="{% url 'book_delete' book.pk %}" class="btn btn-outline-danger">Delete</a>  
+                    </div>   
+                </div>  
             </div>  
         </div>  
-    </div>  
         {% empty %}  
         <div class="col-12">  
             <p class="text-center text-muted">No books available. Add one using the button above.</p>  

@@ -1,0 +1,14 @@
+{% extends 'myapp/base.html' %}  
+
+{% block title %}Home - Book Manager{% endblock %}  
+
+{% block content %}  
+<center>
+<h1>Welcome to Book Manager</h1>  
+<p>Manage your book collection with ease. Add new book, view your catalog and edit details.</p>  
+<div>  
+    <a href="{% url 'book_create' %}" class="btn btn-primary">Add New Book</a>  
+    <a href="{% url 'book_list' %}" class="btn btn-success">View Book List</a>  
+</div>  
+</center>
+{% endblock %}

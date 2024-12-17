@@ -1,0 +1,106 @@
+{% extends 'myapp/base.html' %}  
+
+{% block title %}Book List - Book Manager{% endblock %}  
+
+{% block content %}  
+<div class="container my-4">  
+    <h2 class="text-center mb-4">Book Catalog</h2>  
+    <div class="mb-3">  
+        <!-- Add Book Button -->  
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBookModal">  
+            Add New Book  
+        </button>  
+    </div>  
+    
+    <!-- Modal Structure -->  
+    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">  
+        <div class="modal-dialog">  
+            <div class="modal-content">  
+                <div class="modal-header">  
+                    <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>  
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>  
+                </div>  
+                <div class="modal-body">  
+                    <form id="addBookForm" enctype="multipart/form-data">  
+                        {% csrf_token %}  
+                        <div class="mb-3">  
+                            <label for="bookTitle" class="form-label">Title</label>  
+                            <input type="text" class="form-control" id="bookTitle" name="bookTitle" required>  
+                        </div>  
+                        <div class="mb-3">  
+                            <label for="bookAuthor" class="form-label">Author</label>  
+                            <input type="text" class="form-control" id="bookAuthor" name="bookAuthor" required>  
+                        </div>  
+                        <div class="mb-3">  
+                            <label for="bookDescription" class="form-label">Description</label>  
+                            <textarea class="form-control" id="bookDescription" name="bookDescription"></textarea>  
+                        </div>  
+                        <div class="mb-3">  
+                            <label for="bookImage" class="form-label">Upload Image</label>  
+                            <input type="file" class="form-control" id="bookImage" name="bookImage">  
+                        </div>  
+                    </form>  
+                </div>  
+                <div class="modal-footer">  
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>  
+                    <button type="button" class="btn btn-primary" id="submitBookButton">Add Book</button>  
+                </div>  
+            </div>  
+        </div>  
+    </div>  
+    
+    <script>  
+        document.getElementById('submitBookButton').addEventListener('click', function() {  
+            var formData = new FormData(document.getElementById('addBookForm'));  
+    
+            fetch("{% url 'book_create' %}", {  
+                method: 'POST',  
+                body: formData,  
+                headers: {  
+                    'X-CSRFToken': "{{ csrf_token }}",  // Ensure CSRF token is included  
+                }  
+            })  
+            .then(response => response.json())  
+            .then(data => {  
+                if (data.success) {  
+                    alert('Book added successfully!');  
+                    // Optionally, you can close the modal here  
+                    // $('#addBookModal').modal('hide');   
+                    // Reset the form after successful submission  
+                    document.getElementById('addBookForm').reset();  
+                } else {  
+                    alert('Error adding book: ' + data.error);  
+                }  
+            })  
+        });  
+    </script>
+
+<div class="row">  
+    {% for book in books %}  
+    <div class="col-md-4">  
+        <div class="card shadow-sm mb-4">  
+            {% if book.image and book.image.url %}  
+            <img src="{{ book.image.url }}" class="card-img-top" alt="{{ book.title }}">  
+            {% else %}  
+            <img src="https://via.placeholder.com/150" class="card-img-top" alt="No Image Available">  
+            {% endif %}  
+            <div class="card-body">  
+                <h5 class="card-title">{{ book.title }}</h5>  
+                <h6 class="card-subtitle mb-2 text-muted">by {{ book.author }}</h6>  
+                <p class="card-text">{{ book.description|truncatechars:100 }}</p>  
+                <div class="btn-group" role="group" aria-label="Basic outlined example">  
+                    <a href="{% url 'book_update' book.pk %}" class="btn btn-outline-secondary">Edit</a>  
+                    <a href="{% url 'book_detail' book.pk %}" class="btn btn-outline-primary">View</a>  
+                    <a href="{% url 'book_delete' book.pk %}" class="btn btn-outline-danger">Delete</a>  
+                </div>   
+            </div>  
+        </div>  
+    </div>  
+        {% empty %}  
+        <div class="col-12">  
+            <p class="text-center text-muted">No books available. Add one using the button above.</p>  
+        </div>  
+        {% endfor %}  
+    </div>  
+</div>
+{% endblock %}

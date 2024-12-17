@@ -21,13 +21,13 @@ class BookCreateView(CreateView):
     model = Book
     template_name = 'myapp/book_form.html'
     fields = ['title', 'author', 'description', 'published_date', 'isbn', 'image']
-    success_url = './books/'
+    success_url = reverse_lazy('book_list')
 
 class BookUpdateView(UpdateView):
     model = Book
     template_name = 'myapp/book_form.html'
-    fields = ['title', 'author', 'descriptop', 'published_date', 'isbn', 'image']
-    success_url = '/books/'
+    fields = ['title', 'author', 'description', 'published_date', 'isbn', 'image']
+    success_url = reverse_lazy('book_list')
 
 class BookDeleteView(DeleteView):
     model = Book
